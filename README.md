@@ -1,62 +1,82 @@
 # ROS 2 Turtlesim – Square Movement
 
-## Overview
-This project implements a simple autonomous movement system using ROS 2 and the Turtlesim simulator. A turtle is programmed to move forward and rotate, following a square-like path using its position and orientation data.
+A basic ROS 2 project demonstrating autonomous turtle movement using position and orientation feedback in the Turtlesim simulator.
 
-The project demonstrates the use of ROS 2 publishers, subscribers, timers, and velocity commands.
+The project consists of a **Turtle Square Node** that publishes velocity commands and subscribes to the turtle's pose to control its forward movement and rotation.
 
-## Technologies Used
-- ROS 2 (Humble)
-- Python
-- Turtlesim
-- `rclpy`
-- `geometry_msgs`
-- `turtlesim`
+**ROS 2 Version:** Humble
 
-## How It Works
+---
 
-The program uses a ROS 2 node named `turtle_square` to control the movement of the turtle.
+## Concepts Used
 
-1. **Publisher:** Publishes velocity commands to `/turtle1/cmd_vel` using the `Twist` message type.
-2. **Subscriber:** Subscribes to `/turtle1/pose` to receive the turtle's current position (`x`, `y`) and orientation (`theta`).
-3. **Initial Position:** Stores the turtle's starting coordinates to calculate the distance travelled.
-4. **Forward Movement:** The turtle moves forward with a linear velocity of `2.0` until it has travelled a distance of approximately 2 units.
-5. **Rotation:** Once the target distance is reached, the turtle stops moving forward and rotates until it has turned approximately 90 degrees.
-6. **Timer Callback:** A timer periodically checks the turtle's position and orientation and publishes the appropriate velocity commands.
+* Python
+* `rclpy`
+* `geometry_msgs/Twist`
+* `turtlesim/Pose`
+* Publishers
+* Subscribers
+* Topics
+* Timers
+* Euclidean Distance
+* Angular Displacement
 
-## ROS 2 Concepts Implemented
-- Creating a custom ROS 2 node using `rclpy`
-- Publishing velocity commands using `Twist`
-- Subscribing to position data using `Pose`
-- Using callbacks to process incoming messages
-- Implementing timer-based control
-- Calculating distance using Euclidean distance
-- Using angular displacement to control rotation
+---
+
+## Features
+
+* The node publishes velocity commands to `/turtle1/cmd_vel`.
+* Subscribes to `/turtle1/pose` to obtain the turtle's position and orientation.
+* Stores the initial coordinates as a reference point.
+* Calculates the distance travelled using Euclidean distance.
+* Moves the turtle forward with a linear velocity of `2.0`.
+* Stops forward movement after travelling approximately 2 units.
+* Rotates the turtle until it reaches approximately 90 degrees of angular displacement.
+* Uses a timer callback to continuously update and publish velocity commands.
+
+---
+
+## System Design
+
+| Turtle Square Node | Topic | Turtlesim |
+|---|---|---|
+| Creates a Publisher | `/turtle1/cmd_vel` | Receives velocity commands |
+| Creates a Subscription | `/turtle1/pose` | Publishes pose information |
+| `timer_callback()` | → | Controls turtle movement |
+| `pose_callback()` | ← | Updates position data |
+
+---
 
 ## How to Run
 
-### 1. Source ROS 2
+1. Build the workspace.
+
 ```bash
-source /opt/ros/humble/setup.bash
+colcon build
 ```
 
-### 2. Start Turtlesim
-Open a terminal and run:
+2. Source the workspace.
+
+```bash
+source install/setup.bash
+```
+
+3. Start the Turtlesim simulator.
+
 ```bash
 ros2 run turtlesim turtlesim_node
 ```
 
-### 3. Run the Python Script
-Open another terminal, navigate to the directory containing the script, and run:
+4. Open a new terminal, source the workspace again, and run the node.
+
 ```bash
-python3 square.py
+source install/setup.bash
+ros2 run <package_name> <executable_name>
 ```
 
-## Learning Outcomes
-Through this project, I gained practical experience with ROS 2 communication mechanisms, node creation, message handling, and basic robot movement control using position and orientation feedback.
+---
 
-## Future Improvements
-- Implement four complete sides with controlled 90-degree turns.
-- Improve angle handling to account for orientation wraparound.
-- Introduce more precise movement control using tolerances.
-- Implement a state-based movement sequence for smoother square trajectories.
+## Notes
+
+* Ensure `package.xml` and `setup.py` are updated with the correct package and executable names before building the workspace.
+* The current implementation performs one forward movement and one approximately 90-degree rotation. Repetition for all four sides is a future improvement.
